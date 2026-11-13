@@ -1,0 +1,50 @@
+name: SCUS_942.44
+sha1: ffa9252384eb16ce5ae14061bb87c86701ab4893
+options:
+  basename: scus_942.44
+  target_path: disc/SCUS_942.44
+  base_path: ..
+  platform: psx
+  compiler: PSYQ
+  asm_path: asm/scus_942.44
+  src_path: src/scus_942.44
+  asset_path: assets/scus_942.44
+  build_path: build
+  ld_script_path: build/scus_942.44.ld
+  find_file_boundaries: False
+  # Set by the startup code at 0x80048A74.
+  gp_value: 0x80060878
+  o_as_suffix: True
+  use_legacy_include_asm: False
+  section_order: [".rodata", ".text", ".data", ".bss"]
+  symbol_addrs_path:
+    - config/symbols/scus_942.44.txt
+  undefined_funcs_auto_path: build/scus_942.44.undefined_funcs_auto.txt
+  undefined_syms_auto_path: build/scus_942.44.undefined_syms_auto.txt
+  subalign: 2
+  string_encoding: ASCII
+  data_string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: header
+    type: header
+    start: 0x0
+  - name: scus_942.44
+    type: code
+    start: 0x800
+    vram: 0x80010000
+    # The startup code clears 0x80060A38 to 0x8006EA78.
+    bss_size: 0xE040
+    subsegments:
+      - [0x800, rodata]
+      # The first function, 0x8001101C.
+      - [0x181C, asm]
+      # The data starts with the 64-character digit table at 0x8005BC58, as Crash 2's at 0x8005B198.
+      - [0x4C458, data]
+      # Three functions inside the data, at 0x8005D370, 0x8005D898 and 0x8005D968.
+      - [0x4DB70, asm, code_in_data]
+      - [0x4E5C4, data, data_2]
+      - { start: 0x51238, type: bss, vram: 0x80060A38, name: bss }
+  # The file goes on to 0x51800 with zeros over the start of .bss.
+  - [0x51238]
