@@ -18,7 +18,7 @@ Where each site is (addresses as SCUS_942.44 places them):
 |---|---|---|---|
 | 0x8004103C | `Gfx_DrawWorlds` 0x80040ED8 (`world-renderer.md`) | core loop 0x80011C04 | the world's sort list |
 | 0x800436AC | 0x80043310 | core loop 0x80011CC0, scene flag 0x400000 and scene + 0x98 set | a scene effect after the world |
-| 0x8004411C | 0x80043FFC | core loop 0x80011CE4, scene flag 0x1000000 | a scene effect after the world |
+| 0x8004411C | 0x80043FFC | core loop 0x80011CE4, scene flag 0x1000000 | the water grid (`water-grid.md`) |
 | 0x800453F0 | 0x800452A0 | core loop 0x80011D18, scene flag 0x1000000, not levels 0xE or 0x1C | a scene effect after the world |
 | 0x8003EDB8, 0x8003EEB0 | the model drawer from 0x8003E040 (0x8003E520 is the glow scenes' scene + 0x2C routine) | object draw paths | objects |
 | 0x8003FE14, 0x8003FF00 | 0x8003F944 (0x8003FA00 is the underwater scenes' scene + 0x2C routine) | 0x8003F7B8 | objects |
@@ -44,8 +44,8 @@ Crash 2's 0x80041D14 in quarter units:
 
 ## Seen in the picture at 16:9
 
-The world renderer is host code in the psx-crash port, its column test against the presented canvas. The rest still
-cull at x = 512; whether that shows was tested by raising each group's right bound through the debug server (the `ori`
+The world renderer and the water grid are host code in the psx-crash port, their column test against the presented
+canvas. The rest still cull at x = 512; whether that shows was tested by raising each group's right bound through the debug server (the `ori`
 after each `lui` to 0x3FF; the box test's `addiu $a2, $a2, -0x200` at 0x8003E024 to -0x3FF) from one saved state,
 16:9, 60 frames later, against the same state unpatched (scenes 0x02, 0x03, 0x04, 0x0D, 0x0E):
 
