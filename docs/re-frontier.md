@@ -66,6 +66,14 @@ Statuses: ✅ `re-verified` · 🟡 `re-partial` · 🔬 `in-progress` · ⬜ `t
 - gap: none for the frame step.
 - notes: Body hashes in `executable.json` are checked by `tools/verify_executable.py`.
 
+### CRASH3-WORLD — the world renderer and its screen test
+- status: re-partial
+- deps: CRASH3-FRAME
+- evidence: `Gfx_DrawWorlds` 0x80040ED8, its default steps, three link tails and five scene modes are read (`docs/notes/world-renderer.md`); the ten packed-bound screen tests are placed (`docs/notes/screen-culls.md`). The port's host renderer is byte-identical to the guest at 4:3 in default, sway and glow under the override differential; underwater differs only in each polygon's last corner colour, where the guest under Lightrec stores a stale value instead of the `mfc2` in the branch delay slot (psx-crash issue 0030).
+- where: `game/render/world_*`, `titles/crash3/render/world_*`
+- gap: Pulse and the own-slot tail are reached at no level entry; the scene effects (0x80043310, 0x80043FFC, 0x800452A0) and object drawers still cull at x = 512; 0x8003CB24's caller is not traced.
+- notes: Cross-title dep: crash2-decomp's world renderer; one host implementation serves both titles.
+
 ## Runtime execution migration
 
 ### CRASH3-JIT-01 — migrate Crash 3 after Crash 2 is complete
