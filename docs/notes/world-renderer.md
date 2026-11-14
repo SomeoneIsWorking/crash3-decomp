@@ -82,5 +82,5 @@ Glow and underwater also store a routine at scene + 0x2C (0x8003E520 and 0x8003F
 ## Reached by warp
 
 At each level's entry (`warp scene`, 6 s): default in most scenes; sway 0x0B, 0x0C, 0x10; underwater (bucket tail)
-0x0E, 0x1C; glow 0x24, 0x25. Pulse and the own-slot tail are selected at no level entry. Scene 0x3A aborts the
-process on its warp.
+0x0E, 0x1C; glow 0x24, 0x25. Pulse and the own-slot tail are selected at no level entry. Scene 0x3A, an Aku Aku
+screen, draws in the default mode.
