@@ -52,8 +52,25 @@ zone, camera path and progress from a continue block (0x800215E8). Its callers: 
 after a -2 request, 0x800307F4 (at 0x80030898) and the GOOL op 0x1C handler 0x80035D08 (at 0x80036680), the last
 two without a scene request.
 
+## Animation
+
+- The pose fetch 0x8001B0BC(object, object + 0x78) is Crash 2's `func_8001A4A4`: when the animation +0xE8 is a vertex
+  animation (first byte 1) it calls 0x8001B524(object, block + 0x20, block + 0x24) for the frame's two vertex frames
+  (block = object +8) and opens the model entry named at the first frame + 0xC. Only logic paths call it (0x8001E7E4,
+  0x8001F0F0, 0x800369EC).
+- `Gfx_QueueObject` 0x8001B7A0, vertex kind 1: the packet takes the block's frames at +0x30 and +0x34 and its object at
+  +0x10. One frame twice takes the light mode's single step (table 0x8005C270, even entries) and packet flags
+  0x40000000; two frames take the morph step (odd entries: 0x8003D36C, 0x8003D748, 0x8003D788, 0x8003D80C,
+  0x8003D8F8, 0x8003E39C, 0x8003F2FC) and 0x60000000.
+- 0x8003F6D4 puts the halfway of the two frames' boxes (x, y halves at +0, z at +4) at scratchpad 0x118..0x11C;
+  0x8003F63C copies the vertex cache and opens both frames' streams at frame + `*(frame + 0x18)` (Crash 2's 0x80043658
+  with the packet's words 8 bytes on and the data offset at +0x18).
+- The unlit morph reader 0x8003E0FC is Crash 2's `func_8003ED14` instruction for instruction, apart from the sum:
+  x and y are `((a & lanes) + (b & lanes)) << 4` plus the box, z is `((a & 0xFF00) + (b & 0xFF00)) >> 4` plus the box
+  (Crash 2: `<< 1` and `>> 7`). The draw steps load it into `$s7` (0x8003D6E0, 0x8003D8F4, 0x8003F32C, 0x8003F350);
+  0x8003D0FC is the single-frame reader, and 0x800400FC a lit reader of the same shape.
+
 ## Open
 
 - `Cam_Update`'s handlers (mode word 0x8005C634, kind 0x80065D80) are not mapped against Crash 2's prepared cut and
   zone walk; which of them move the camera in one step is not known.
-- Vertex-animated objects' frame fetch and morph drawer are not read.
