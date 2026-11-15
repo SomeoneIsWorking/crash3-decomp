@@ -48,7 +48,7 @@ angles +0x6C, scale +0x78, animation +0xE8 and frame +0xEC. The camera is at 0x8
 ## `Sys_LoadCheckpoint` (0x80030388)
 
 Kills the current zone's objects, restores the entity flags (0x300 words to 0x8006B688), the frame counter (0) and the
-zone, camera path and progress from a continue block (0x800215E8). Its callers: `NativeFrameCoreLoop` at 0x80011A08
+zone, camera path and progress from a continue block, the camera placed by `Cam_MoveAlongPath` 0x800215E8 (Crash 2's 0x800200A8). Its callers: `NativeFrameCoreLoop` at 0x80011A08
 after a -2 request, 0x800307F4 (at 0x80030898) and the GOOL op 0x1C handler 0x80035D08 (at 0x80036680), the last
 two without a scene request.
 
@@ -70,7 +70,15 @@ two without a scene request.
   (Crash 2: `<< 1` and `>> 7`). The draw steps load it into `$s7` (0x8003D6E0, 0x8003D8F4, 0x8003F32C, 0x8003F350);
   0x8003D0FC is the single-frame reader, and 0x800400FC a lit reader of the same shape.
 
-## Open
+## Camera modes
 
-- `Cam_Update`'s handlers (mode word 0x8005C634, kind 0x80065D80) are not mapped against Crash 2's prepared cut and
-  zone walk; which of them move the camera in one step is not known.
+`Cam_Update` (0x80028A78) clears the go byte 0x8005C63F, processes the camera's messages (0x800256D4, 0x80027E68),
+then runs the handler of the mode word 0x8005C634. Its values are Crash 2's `g_CameraMode` as bits (`1 << (mode - 1)`),
+and each handler has its Crash 2 counterpart's shape (crash2-decomp `docs/notes/camera-cuts.md`):
+
+| mode | Crash 2 | handler | camera |
+|---|---|---|---|
+| 0x10 | 5 | the kind handlers of 0x80065D80 | follows the current path |
+| 0x20 | 6 | 0x80024AD4 | eases to the path at 0x8005C76C over the count 0x8005C6A8 from the position saved at 0x8005C6B0 |
+| 0x40 | 7 | 0x80024E80 | follows the current path until the go byte is set; then `Cam_MoveAlongPath` 0x800215E8 puts it on the prepared path of another zone (0x8005C76C..0x8005C774) and the mode returns to 0x10: a cut |
+| 0x100 | 9 | 0x80024F54 | walks the zones' paths (0x800284E8) until one is found, puts it there, mode 0x10, all in one call: a cut |

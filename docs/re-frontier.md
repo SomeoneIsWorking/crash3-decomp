@@ -77,9 +77,9 @@ Statuses: ✅ `re-verified` · 🟡 `re-partial` · 🔬 `in-progress` · ⬜ `t
 ### CRASH3-REPLAY — the draw section and its inputs for in-betweens
 - status: re-partial
 - deps: CRASH3-FRAME, CRASH3-WORLD
-- evidence: `docs/notes/frame-loop.md`: the picture half from the `Gfx_UpdateView` call 0x80011A4C to `NativeFrameGpuUpdate` 0x80016634, `Obj_UpdateAll` 0x8001D16C, the sample point `Sys_BeforeDrawObjects` 0x80011FC0, the object pool, camera, shake and fade. Replayed at t = 1 after the object walk, 3,945 of 3,950 frames of `warp 5` match the real ordering table word for word; the other five are each the first frame after `Sys_LoadCheckpoint` 0x80030388 (frame counter reset to 1), which the port declares a cut. The pose fetch, the morph steps and the unlit reader are Crash 2's (`docs/notes/frame-loop.md`, Animation); with them weighted, the in-betweens of Crash's idle pose sit a median 0.52 of the way between its ticks.
-- where: `titles/crash3/entry/facts.cpp` (`kReplay`, `kPoses`), `game/render/morph_reader.*`, `game/replay/pose_blend.*`, `titles/crash3/frame/camera_cuts.*`, `game/replay/*`
-- gap: `Cam_Update`'s own cuts; the lit morph readers are not read.
+- evidence: `docs/notes/frame-loop.md`: the picture half from the `Gfx_UpdateView` call 0x80011A4C to `NativeFrameGpuUpdate` 0x80016634, `Obj_UpdateAll` 0x8001D16C, the sample point `Sys_BeforeDrawObjects` 0x80011FC0, the object pool, camera, shake and fade. Replayed at t = 1 after the object walk, 3,945 of 3,950 frames of `warp 5` match the real ordering table word for word; the other five are each the first frame after `Sys_LoadCheckpoint` 0x80030388 (frame counter reset to 1), which the port declares a cut. `Cam_Update`'s modes are Crash 2's as bits; the prepared cut (0x80024E80 with the go byte 0x8005C63F) and the zone walk (0x80024F54) are cuts (`docs/notes/frame-loop.md`, Camera modes). The pose fetch, the morph steps and the unlit reader are Crash 2's (`docs/notes/frame-loop.md`, Animation); with them weighted, the in-betweens of Crash's idle pose sit a median 0.52 of the way between its ticks.
+- where: `titles/crash3/entry/facts.cpp` (`kReplay`, `kPoses`), `game/render/morph_reader.*`, `game/replay/pose_blend.*`, `game/replay/*`
+- gap: the lit morph readers are not read.
 - notes: Cross-title dep: crash2-decomp's frame loop; the replay owner is shared.
 
 ## Runtime execution migration
