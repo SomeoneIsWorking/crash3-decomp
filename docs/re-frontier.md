@@ -74,6 +74,14 @@ Statuses: ✅ `re-verified` · 🟡 `re-partial` · 🔬 `in-progress` · ⬜ `t
 - gap: Pulse and the own-slot tail are reached at no level entry; the scene effects (0x80043310, 0x80043FFC, 0x800452A0) and object drawers still cull at x = 512; 0x8003CB24's caller is not traced.
 - notes: Cross-title dep: crash2-decomp's world renderer; one host implementation serves both titles.
 
+### CRASH3-REPLAY — the draw section and its inputs for in-betweens
+- status: re-partial
+- deps: CRASH3-FRAME, CRASH3-WORLD
+- evidence: `docs/notes/frame-loop.md`: the picture half from the `Gfx_UpdateView` call 0x80011A4C to `NativeFrameGpuUpdate` 0x80016634, `Obj_UpdateAll` 0x8001D16C, the sample point `Sys_BeforeDrawObjects` 0x80011FC0, the object pool, camera, shake and fade. Replayed at t = 1 after the object walk, 3,945 of 3,950 frames of `warp 5` match the real ordering table word for word; the other five are each the first frame after `Sys_LoadCheckpoint` 0x80030388 (frame counter reset to 1), which the port declares a cut.
+- where: `titles/crash3/entry/facts.cpp` (`kReplay`), `titles/crash3/frame/camera_cuts.*`, `game/replay/*`
+- gap: The vertex-animated pose fetch and morph drawer; `Cam_Update`'s own cuts.
+- notes: Cross-title dep: crash2-decomp's frame loop; the replay owner is shared.
+
 ## Runtime execution migration
 
 ### CRASH3-JIT-01 — migrate Crash 3 after Crash 2 is complete
